@@ -11,3 +11,9 @@ Accept: application/json
 ###
 
 GET {{AwesomeCompany_HostAddress}}/employee/all
+
+###
+GET {{AwesomeCompany_HostAddress}}/employee/120
+Accept: application/json
+
+PUT {{AwesomeCompany_HostAddress}}/employee/increase-salaries?companyId=1

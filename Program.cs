@@ -20,9 +20,33 @@ todosApi.MapGet("/{id}", (int id) =>
 
 
 var employeesApi = app.MapGroup("/employee");
+
 employeesApi.MapGet("/all", async (DatabaseContext _dbContext) =>
 {
     return _dbContext.Employees.ToList();
 });
+
+employeesApi.MapGet("/{id}", async (int id, DatabaseContext _dbContext) =>
+{
+    return _dbContext.Employees.FirstOrDefault(v => v.Id == id);
+});
+
+employeesApi.MapPut("/increase-salaries", async (int companyId, DatabaseContext _dbContext) =>
+{
+    var company = _dbContext.Companies.Include(c => c.Employees).FirstOrDefault(c => c.Id == companyId);
+    if (company != null)
+    {
+        foreach (var employee in company.Employees)
+        {
+            employee.Salary *= 1.1m;
+        }
+        company.LastSalaryUpdateUTC = DateTime.UtcNow;
+        _dbContext.SaveChanges();
+    }
+    else
+        return Results.NotFound("There is no company with this supplied ID");
+    return Results.Ok();
+});
+
 app.Run();
 
